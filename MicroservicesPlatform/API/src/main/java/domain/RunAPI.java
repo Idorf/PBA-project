@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.api;
+package domain;
 
 /**
  *
@@ -13,6 +13,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.*;
 
 @SpringBootApplication  //Same as @Configuration @EnableAutoConfiguration @ComponentScan -- http://docs.spring.io/autorepo/docs/spring-boot/current/reference/html/using-boot-using-springbootapplication-annotation.html
@@ -26,9 +27,9 @@ import org.springframework.web.bind.annotation.*;
                     //@ResponseBody indicates that the return type should be written straight to the HTTP response body 
 
 
-//@EnableFeignClients
+@EnableFeignClients
 public class RunAPI {
-
+    
   public static void main(String[] args) {
     SpringApplication.run(RunAPI.class, args);
   }
