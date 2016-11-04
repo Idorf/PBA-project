@@ -13,8 +13,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.*;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.web.bind.annotation.*;
 
 @SpringBootApplication  //Same as @Configuration @EnableAutoConfiguration @ComponentScan -- http://docs.spring.io/autorepo/docs/spring-boot/current/reference/html/using-boot-using-springbootapplication-annotation.html
 @EnableEurekaClient     //Makes the app into both a Eureka "instance" (i.e. it registers itself) and a "client"  -- http://cloud.spring.io/spring-cloud-netflix/spring-cloud-netflix.html#spring-cloud-eureka-server

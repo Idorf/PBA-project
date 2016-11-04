@@ -1,18 +1,11 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package domain;
+package main.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
-
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,68 +15,92 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Idorf
  */
-//@RestController //@RestController, a specialized version of the controller which is a convenience annotation that does nothing more than add the @Controller and @ResponseBody annotations.  -- https://www.genuitec.com/spring-frameworkrestcontroller-vs-controller/
-//@Controller annotation indicates that a particular class serves the role of a controller.
-//@ResponseBody indicates that the return type should be written straight to the HTTP response body 
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//-----------------------------------------------------------CRUD-CONTROLLER-CUSTOMERSERVICE-------------------------------------------------//
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 @RestController
 @RequestMapping("/CustomerService")
-
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//------------------------------------------------------------------CRUD-CONTROLLER-API------------------------------------------------------//
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-public class APICustomerController {
+public class CustomerServiceController {
 
     @Autowired
-    LoadBalancerClient loadBalancerClient;
-
-    @Autowired
-    CustomerServiceInterface CustomerServiceInterface;
-
-    @Autowired
-    TechnicianService TechnicianServiceInterface;
+    CustomerRepository customerRepository;
 
 //                                                                                                                                           //
-//---------------------------------------------------------------------CREATE----------------------------------------------------------------//
+//--------------------------------------------------------------------CREATE-----------------------------------------------------------------//
 //                                                                                                                                           //
     @RequestMapping(value = "/create_customer", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
-        return CustomerServiceInterface.createCustomer(customer);
+
+        customerRepository.save(customer);
+
+        return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 //                                                                                                                                           //
 //---------------------------------------------------------------------READ------------------------------------------------------------------//
 //                                                                                                                                           //
 
     @RequestMapping(value = "/select_customer", method = RequestMethod.GET, params = {"customerID"})
-    public ResponseEntity<Customer> selectCustomer(@RequestParam int customerID) {
-        return CustomerServiceInterface.selectCustomer(customerID);
+    public ResponseEntity<Customer> selectCustomer(@RequestParam(value = "customerID") int customerID) {
+
+        Customer customer = customerRepository.findOne(customerID);
+
+        if (customer == null) {
+            System.out.println("Unable to delete. User with id " + customerID + " not found");
+            return new ResponseEntity<>(customer, HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 //                                                                                                                                           //
 //---------------------------------------------------------------------EDIT------------------------------------------------------------------//
 //                                                                                                                                           //
 
     @RequestMapping(value = "/update_customer/{customerID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Customer updateCustomer(@PathVariable("customerID") int customerID, @RequestBody Customer updatedCustomerValues) {
+    public ResponseEntity<Customer> updatedCustomer(@PathVariable("customerID") int customerID, @RequestBody Customer updatedCustomerValues) {
+        System.out.println("-------------------------------test");
 
-        return CustomerServiceInterface.updateCustomer(customerID, updatedCustomerValues);
+        Customer customer = customerRepository.findOne(customerID);
+        if (customer == null) {
+            System.out.println("Unable to delete. User with id " + customerID + " not found");
+            return new ResponseEntity<>(customer, HttpStatus.NOT_FOUND);
+        }
+
+        //set new event information in the current customer object.
+        customer.setCompany(updatedCustomerValues.getCompany());
+        customer.setContactPerson(updatedCustomerValues.getContactPerson());
+
+        //save to database
+        customerRepository.save(customer);
+
+        return new ResponseEntity<>(customer, HttpStatus.OK);
     }
+
 //                                                                                                                                           //
 //--------------------------------------------------------------------DElETE-----------------------------------------------------------------//
 //                                                                                                                                           //
-
     @RequestMapping(value = "/delete_customer/{customerID}", method = RequestMethod.DELETE)
     public ResponseEntity<Customer> deleteCustomer(@PathVariable("customerID") int customerID) {
 
-        return CustomerServiceInterface.deleteCustomer(customerID);
+        System.out.println("Fetching & Deleting User with id " + customerID);
+
+        Customer customer = customerRepository.findOne(customerID);
+        if (customer == null) {
+            System.out.println("Unable to delete. User with id " + customerID + " not found");
+            return new ResponseEntity<>(customer, HttpStatus.NOT_FOUND);
+        }
+
+        customerRepository.delete(customerID);
+
+        return new ResponseEntity<>(customer, HttpStatus.NO_CONTENT);
 
     }
+//                                                                                                                                         //
+//--------------------------------------------------------------------TEST-----------------------------------------------------------------//
+//                                                                                                                                         //
 
-//                                                                                                                                           //
-//--------------------------------------------------------------------TEST-------------------------------------------------------------------//
-//                                                                                                                                           //
     @RequestMapping("/Test")
     public String getTestMessage() {
 
-        return CustomerServiceInterface.getTestMessage();
+        return "Test message from customerservice ";
     }
 
 }
