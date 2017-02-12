@@ -1,9 +1,11 @@
 package main.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,78 +21,86 @@ import org.springframework.web.bind.annotation.RestController;
 //-----------------------------------------------------------CRUD-CONTROLLER-CUSTOMERSERVICE-------------------------------------------------//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 @RestController
-@RequestMapping("/CustomerService")
-public class CustomerServiceController {
+@RequestMapping("/CustomerService/Users")
+@SpringBootApplication
+public class UserServiceController {
 
     @Autowired
-    CustomerRepository customerRepository;
+    JdbcTemplate jdbcTemplate;
 
 //                                                                                                                                           //
 //--------------------------------------------------------------------CREATE-----------------------------------------------------------------//
 //                                                                                                                                           //
-    @RequestMapping(value = "/create_customer", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+    @RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> createUser(@RequestBody User user) {
 
-        customerRepository.save(customer);
+        jdbcTemplate.update(
+                "CALL CreateUser (?,?,?,?,?,?)",
+               user.getUserType(), user.getFirstName(), user.getLastName(), user.getEmail(), user.getTelephoneNo(), user.getCustomerId());
+               // customer.getContactPerson(), customer.getCompany());
+               // "insert into user (role_id, first_name,last_name,email,telephone_no) values (?, ?, ?, ?, ?)",
 
-        return new ResponseEntity<>(customer, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 //                                                                                                                                           //
 //---------------------------------------------------------------------READ------------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(value = "/select_customer", method = RequestMethod.GET, params = {"customerID"})
-    public ResponseEntity<Customer> selectCustomer(@RequestParam(value = "customerID") int customerID) {
+    @RequestMapping(value = "/", method = RequestMethod.GET, params = {"userID"})
+    public ResponseEntity<User> selectUser(@RequestParam(value = "userID") int userID) {
 
-        Customer customer = customerRepository.findOne(customerID);
+        String sql = "SELECT * FROM user WHERE user_id = ?";
 
-        if (customer == null) {
-            System.out.println("Unable to delete. User with id " + customerID + " not found");
-            return new ResponseEntity<>(customer, HttpStatus.NOT_FOUND);
+        User user = (User) jdbcTemplate.queryForObject(sql, new Object[]{userID}, new UserRowMapper());
+
+        if (user == null) {
+
+            return new ResponseEntity<>(user, HttpStatus.NOT_FOUND);
+
         }
-        return new ResponseEntity<>(customer, HttpStatus.OK);
+        return new ResponseEntity<>(user, HttpStatus.OK);
     }
 //                                                                                                                                           //
 //---------------------------------------------------------------------EDIT------------------------------------------------------------------//
 //                                                                                                                                           //
+//
 
-    @RequestMapping(value = "/update_customer/{customerID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Customer> updatedCustomer(@PathVariable("customerID") int customerID, @RequestBody Customer updatedCustomerValues) {
+    @RequestMapping(value = "/{userID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> updatedUser(@PathVariable("userID") int userID, @RequestBody User updatedUserValues) {
         System.out.println("-------------------------------test");
 
-        Customer customer = customerRepository.findOne(customerID);
-        if (customer == null) {
-            System.out.println("Unable to delete. User with id " + customerID + " not found");
-            return new ResponseEntity<>(customer, HttpStatus.NOT_FOUND);
+        jdbcTemplate.update("UPDATE user SET role_id = ?, first_name = ?, last_name = ?, email = ?, telephone_no = ?   where user_id = ?", updatedUserValues.getUserType(), updatedUserValues.getFirstName(), updatedUserValues.getLastName(), updatedUserValues.getEmail(), updatedUserValues.getTelephoneNo(), userID);
+
+        String sql = "SELECT * FROM user WHERE user_id = ?";
+
+        updatedUserValues = (User) jdbcTemplate.queryForObject(sql, new Object[]{userID}, new UserRowMapper());
+
+        if (updatedUserValues == null) {
+            System.out.println("Unable to delete. User with id " + userID + " not found");
+            return new ResponseEntity<>(updatedUserValues, HttpStatus.NOT_FOUND);
         }
 
-        //set new event information in the current customer object.
-        customer.setCompany(updatedCustomerValues.getCompany());
-        customer.setContactPerson(updatedCustomerValues.getContactPerson());
-
-        //save to database
-        customerRepository.save(customer);
-
-        return new ResponseEntity<>(customer, HttpStatus.OK);
+        return new ResponseEntity<>(updatedUserValues, HttpStatus.OK);
     }
 
 //                                                                                                                                           //
 //--------------------------------------------------------------------DElETE-----------------------------------------------------------------//
 //                                                                                                                                           //
-    @RequestMapping(value = "/delete_customer/{customerID}", method = RequestMethod.DELETE)
-    public ResponseEntity<Customer> deleteCustomer(@PathVariable("customerID") int customerID) {
+    @RequestMapping(value = "/{userID}", method = RequestMethod.DELETE)
+    public ResponseEntity<User> deleteUser(@PathVariable("userID") int userID) {
 
-        System.out.println("Fetching & Deleting User with id " + customerID);
+        jdbcTemplate.update("DELETE FROM user WHERE user_id = ?", userID);
 
-        Customer customer = customerRepository.findOne(customerID);
-        if (customer == null) {
-            System.out.println("Unable to delete. User with id " + customerID + " not found");
-            return new ResponseEntity<>(customer, HttpStatus.NOT_FOUND);
+        String sql = "SELECT * FROM user WHERE user_id = ?";
+
+        User user = (User) jdbcTemplate.queryForObject(sql, new Object[]{userID}, new CustomerRowMapper());
+
+        if (user == null) {
+            System.out.println("Unable to delete. User with id " + userID + " not found");
+            return new ResponseEntity<>(user, HttpStatus.NOT_FOUND);
         }
 
-        customerRepository.delete(customerID);
-
-        return new ResponseEntity<>(customer, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(user, HttpStatus.NO_CONTENT);
 
     }
 //                                                                                                                                         //

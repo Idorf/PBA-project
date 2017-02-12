@@ -3,16 +3,24 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main.domain;
+package domain;
 
 /**
  *
  * @author Idorf
-// */
-
+ */
 public class User {
+    
+/**
+ *
+ * @author Idorf
+// */
+//@Entity
 
 
+//    @Id
+//    @GeneratedValue
+//    Integer id;
     Integer userID;
     Integer customerId;
     Integer userType;
@@ -22,6 +30,12 @@ public class User {
     Integer telephoneNo;
 
     
+  //  public Customer() {
+//        this.id = 1;
+//        this.Company = "internalCompany";
+//        this.contactPerson = "internalContactPerson";
+    //}
+
     public Integer getUserID() {
         return userID;
     }
@@ -78,4 +92,5 @@ public class User {
         this.telephoneNo = telephoneNo;
     }
 
+ 
 }

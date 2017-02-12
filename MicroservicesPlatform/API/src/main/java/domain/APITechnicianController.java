@@ -27,51 +27,51 @@ import org.springframework.web.bind.annotation.RestController;
 //@Controller annotation indicates that a particular class serves the role of a controller.
 //@ResponseBody indicates that the return type should be written straight to the HTTP response body 
 @RestController
-@RequestMapping("/CustomerService/Customers")
+@RequestMapping("/TechnicianService/Technicians")
 @SpringBootApplication
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------CRUD-CONTROLLER-API------------------------------------------------------//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-public class APICustomerController {
+public class APITechnicianController {
 
     @Autowired
     LoadBalancerClient loadBalancerClient;
 
     @Autowired
-    CustomerServiceInterface CustomerServiceInterface;
+    TechnicianServiceInterface TechnicianServiceInterface;
 
 //                                                                                                                                           //
 //---------------------------------------------------------------------CREATE----------------------------------------------------------------//
 //                                                                                                                                           //
     @RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
-        return CustomerServiceInterface.createCustomer(customer);
+    public ResponseEntity<Technician> createTechnician(@RequestBody Technician technician) {
+        return TechnicianServiceInterface.createTechnician(technician);
     }
 //                                                                                                                                           //
 //---------------------------------------------------------------------READ------------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(value = "/", method = RequestMethod.GET, params = {"customerID"})
-    public ResponseEntity<Customer> selectCustomer(@RequestParam int customerID) {
-        return CustomerServiceInterface.selectCustomer(customerID);
+    @RequestMapping(value = "/", method = RequestMethod.GET, params = {"technicianID"})
+    public ResponseEntity<Technician> selectTechnician(@RequestParam int technicianID) {
+        return TechnicianServiceInterface.selectTechnician(technicianID);
     }
 //                                                                                                                                           //
 //---------------------------------------------------------------------EDIT------------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(value = "/{customerID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Customer> updateCustomer(@PathVariable("customerID") int customerID, @RequestBody Customer updatedCustomerValues) {
+    @RequestMapping(value = "/{technicianID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Technician> updateTechnician(@PathVariable("technicianID") int technicianID, @RequestBody Technician updatedTechnicianValues) {
 
-        return CustomerServiceInterface.updateCustomer(customerID, updatedCustomerValues);
+        return TechnicianServiceInterface.updateTechnician(technicianID, updatedTechnicianValues);
     }
 //                                                                                                                                           //
 //--------------------------------------------------------------------DElETE-----------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(value = "/{customerID}", method = RequestMethod.DELETE)
-    public ResponseEntity<Customer> deleteCustomer(@PathVariable("customerID") int customerID) {
+    @RequestMapping(value = "/{technicianID}", method = RequestMethod.DELETE)
+    public ResponseEntity<Technician> deleteTechnician(@PathVariable("technicianID") int technicianID) {
 
-        return CustomerServiceInterface.deleteCustomer(customerID);
+        return TechnicianServiceInterface.deleteTechnician(technicianID);
 
     }
 
@@ -81,7 +81,7 @@ public class APICustomerController {
     @RequestMapping("/Test")
     public String getTestMessage() {
 
-        return CustomerServiceInterface.getTestMessage();
+        return "Test message from API ";
     }
 
 }

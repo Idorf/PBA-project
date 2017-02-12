@@ -18,48 +18,34 @@ import org.springframework.web.bind.annotation.RequestParam;
  *
  * @author Idorf
  */
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//--------------------------------------------------------------CRUD-FEIGN-INTERFACE-API-----------------------------------------------------//
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-@FeignClient("CustomerService")
-public interface UserServiceInterface {
+@FeignClient("TechnicianService")
+public interface TechnicianServiceInterface {
 
 
- //                                                                                                                                           //
-//---------------------------------------------------------------------Users----------------------------------------------------------------//
-//  
-      
  //                                                                                                                                           //
 //---------------------------------------------------------------------CREATE----------------------------------------------------------------//
 //                                                                                                                                           //
-    @RequestMapping(value = "/CustomerService/Users/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<User> createUser(@RequestBody User user);
+    @RequestMapping(value = "/TechnicianService/Technicians/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Technician> createTechnician(@RequestBody Technician technician);
 
 //                                                                                                                                           //
 //---------------------------------------------------------------------READ------------------------------------------------------------------//
 //                                                                                                                                           //
-    @RequestMapping(method = RequestMethod.GET, value = "/CustomerService/Users/", params = {"userID"})
-    ResponseEntity<User> selectUser(@RequestParam(value = "userID") int userID);
+    @RequestMapping(method = RequestMethod.GET, value = "/TechnicianService/Technicians/", params = {"technicianID"})
+    ResponseEntity<Technician> selectTechnician(@RequestParam(value = "technicianID") int technicianID);
 
 //                                                                                                                                           //
 //---------------------------------------------------------------------EDIT------------------------------------------------------------------//
 //                                                                                                                                           //
-    @RequestMapping(value = "/CustomerService/Users/{userID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<User> updateUser(@PathVariable("userID") int userID, @RequestBody User updatedUserValues);
+    @RequestMapping(value = "/TechnicianService/Technician/{technicianID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Technician> updateTechnician(@PathVariable("technicianID") int technicianID, @RequestBody Technician updatedTechnicianValues);
 
 //                                                                                                                                           //
 //--------------------------------------------------------------------DElETE-----------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/CustomerService/Users/{userID}", params = {"userID"})
-    ResponseEntity<User> deleteUser(@RequestParam(value = "userID") int userID);
+    @RequestMapping(method = RequestMethod.DELETE, value = "/TechnicianService/Technician/{technicianID}", params = {"technicianID"})
+    ResponseEntity<Technician> deleteTechnician(@RequestParam(value = "technicianID") int technicianID);
 
-//                                                                                                                                           //
-//--------------------------------------------------------------------TEST-------------------------------------------------------------------//
-//              
-    
-
-   @RequestMapping("/CustomerService/Test")
-    public String getTestMessage();
-
+  
 }

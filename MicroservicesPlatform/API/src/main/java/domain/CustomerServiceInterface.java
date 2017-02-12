@@ -25,34 +25,46 @@ import org.springframework.web.bind.annotation.RequestParam;
 public interface CustomerServiceInterface {
 
 //                                                                                                                                           //
+//---------------------------------------------------------------------Customers----------------------------------------------------------------//
+//  
+    
+   
+//                                                                                                                                           //
 //---------------------------------------------------------------------CREATE----------------------------------------------------------------//
 //                                                                                                                                           //
-    @RequestMapping(value = "/CustomerService/create_customer", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/CustomerService/Customers/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<Customer> createCustomer(@RequestBody Customer customer);
 
 //                                                                                                                                           //
 //---------------------------------------------------------------------READ------------------------------------------------------------------//
 //                                                                                                                                           //
-    @RequestMapping(method = RequestMethod.GET, value = "/CustomerService/select_customer", params = {"customerID"})
+    @RequestMapping(method = RequestMethod.GET, value = "/CustomerService/Customers/", params = {"customerID"})
     ResponseEntity<Customer> selectCustomer(@RequestParam(value = "customerID") int customerID);
 
 //                                                                                                                                           //
 //---------------------------------------------------------------------EDIT------------------------------------------------------------------//
 //                                                                                                                                           //
-    @RequestMapping(value = "/CustomerService/update_customer/{customerID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    Customer updateCustomer(@PathVariable("customerID") int customerID, @RequestBody Customer updatedCustomerValues);
+    @RequestMapping(value = "/CustomerService/Customers/{customerID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    ResponseEntity<Customer> updateCustomer(@PathVariable("customerID") int customerID, @RequestBody Customer updatedCustomerValues);
 
 //                                                                                                                                           //
 //--------------------------------------------------------------------DElETE-----------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(method = RequestMethod.DELETE, value = "/CustomerService/delete_customer/{customerID}", params = {"customerID"})
+    @RequestMapping(method = RequestMethod.DELETE, value = "/CustomerService/Customers/{customerID}", params = {"customerID"})
     ResponseEntity<Customer> deleteCustomer(@RequestParam(value = "customerID") int customerID);
+
+
 
 //                                                                                                                                           //
 //--------------------------------------------------------------------TEST-------------------------------------------------------------------//
-//                                                                                                                                           //
+//              
+    
 
+    
+    
+    
+    
     @RequestMapping("/CustomerService/Test")
     public String getTestMessage();
 

@@ -6,10 +6,12 @@
 package domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -26,54 +28,93 @@ import org.springframework.web.bind.annotation.RestController;
 //@Controller annotation indicates that a particular class serves the role of a controller.
 //@ResponseBody indicates that the return type should be written straight to the HTTP response body 
 @RestController
-@RequestMapping("/CustomerService")
-
+@RequestMapping("/TechnicianService/Technicians")
+@SpringBootApplication
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-//------------------------------------------------------------------CRUD-CONTROLLER-API------------------------------------------------------//
+//------------------------------------------------------------------CRUD-CONTROLLER-TechnicianService----------------------------------------//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-public class APICustomerController {
+public class TechnicianController {
 
     @Autowired
-    LoadBalancerClient loadBalancerClient;
-
-    @Autowired
-    CustomerServiceInterface CustomerServiceInterface;
-
-    @Autowired
-    TechnicianService TechnicianServiceInterface;
-
+    JdbcTemplate jdbcTemplate;
+  
 //                                                                                                                                           //
 //---------------------------------------------------------------------CREATE----------------------------------------------------------------//
 //                                                                                                                                           //
-    @RequestMapping(value = "/create_customer", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
-        return CustomerServiceInterface.createCustomer(customer);
-    }
+    @RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Technician> createTechnician(@RequestBody Technician technician) {
+        
+                jdbcTemplate.update(
+                "insert into technician (employe_id, first_name, last_name) values (?, ?, ?)",
+               technician.getEmployeId(), technician.getFirstName(), technician.getLastName());
+               // customer.getContactPerson(), customer.getCompany());
+
+        return new ResponseEntity<>(technician, HttpStatus.OK);
+        
+        
+            }
 //                                                                                                                                           //
 //---------------------------------------------------------------------READ------------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(value = "/select_customer", method = RequestMethod.GET, params = {"customerID"})
-    public ResponseEntity<Customer> selectCustomer(@RequestParam int customerID) {
-        return CustomerServiceInterface.selectCustomer(customerID);
+    @RequestMapping(value = "/", method = RequestMethod.GET, params = {"technicianID"})
+    public ResponseEntity<Technician> selectTechnician(@RequestParam int technicianID) {
+        
+          String sql = "SELECT * FROM technician WHERE technician_id = ?";
+
+        Technician technician = (Technician) jdbcTemplate.queryForObject(sql, new Object[]{technicianID}, new TechnicianRowMapper());
+      
+
+        if (technician == null) {
+
+            return new ResponseEntity<>(technician, HttpStatus.NOT_FOUND);
+
+        }
+        return new ResponseEntity<>(technician, HttpStatus.OK);
+        
+        
+        
     }
 //                                                                                                                                           //
 //---------------------------------------------------------------------EDIT------------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(value = "/update_customer/{customerID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Customer updateCustomer(@PathVariable("customerID") int customerID, @RequestBody Customer updatedCustomerValues) {
+    @RequestMapping(value = "/{technicianID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Technician> updateTechnician(@PathVariable("technicianID") int technicianID, @RequestBody Technician updatedTechnicianValues) {
+ System.out.println("-------------------------------test");
 
-        return CustomerServiceInterface.updateCustomer(customerID, updatedCustomerValues);
+        jdbcTemplate.update("UPDATE technician SET first_name = ?, last_name = ?,  employe_id = ?  where technician_id = ?", updatedTechnicianValues.getFirstName(), updatedTechnicianValues.getLastName(), updatedTechnicianValues.getEmployeId(), technicianID);
+
+        String sql = "SELECT * FROM technician WHERE technician_id = ?";
+
+        updatedTechnicianValues = (Technician) jdbcTemplate.queryForObject(sql, new Object[]{technicianID}, new TechnicianRowMapper());
+
+        if (updatedTechnicianValues == null) {
+            System.out.println("Unable to delete. Technician with id " + technicianID + " not found");
+            return new ResponseEntity<>(updatedTechnicianValues, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(updatedTechnicianValues, HttpStatus.OK);
     }
 //                                                                                                                                           //
 //--------------------------------------------------------------------DElETE-----------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(value = "/delete_customer/{customerID}", method = RequestMethod.DELETE)
-    public ResponseEntity<Customer> deleteCustomer(@PathVariable("customerID") int customerID) {
+    @RequestMapping(value = "/{technicianID}", method = RequestMethod.DELETE)
+    public ResponseEntity<Technician> deleteTechnician(@PathVariable("technicianID") int technicianID) {
 
-        return CustomerServiceInterface.deleteCustomer(customerID);
+         jdbcTemplate.update("DELETE FROM technician WHERE technician_id = ?", technicianID);
+
+        String sql = "SELECT * FROM technician WHERE technician_id = ?";
+
+        Technician technician = (Technician) jdbcTemplate.queryForObject(sql, new Object[]{technicianID}, new TechnicianRowMapper());
+
+        if (technician == null) {
+            System.out.println("Unable to delete. Technician with id " + technicianID + " not found");
+            return new ResponseEntity<>(technician, HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(technician, HttpStatus.NO_CONTENT);
 
     }
 
@@ -83,7 +124,7 @@ public class APICustomerController {
     @RequestMapping("/Test")
     public String getTestMessage() {
 
-        return CustomerServiceInterface.getTestMessage();
+        return "Test message from TechnicianService ";
     }
 
 }

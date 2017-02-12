@@ -5,47 +5,96 @@
  */
 package main.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 
 /**
  *
  * @author Idorf
- */
-@Entity
+// */
+
 public class Customer {
 
-    @Id
-    @GeneratedValue
-    Integer id;
-    
-    String Company;
-    String contactPerson;
 
+    private Integer customerId;
+    private Integer customerType;
+    private String customerName;
+    private String city;
+    private String addressLine1StreetName;
+    private String addressLine2StreetNo;
+    private String addressLine3BuildingNo;
+    private Integer zipcode;
+    private String otherAdressDetails;
 
-    public Integer getId() {
-        return id;
+    public Integer getCustomerId() {
+        return customerId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 
-    public String getCompany() {
-        return Company;
+
+    public Integer getCustomerType() {
+        return customerType;
     }
 
-    public void setCompany(String Company) {
-        this.Company = Company;
+    public void setCustomerType(Integer customerType) {
+        this.customerType = customerType;
     }
 
-    public String getContactPerson() {
-        return contactPerson;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setContactPerson(String contactPerson) {
-        this.contactPerson = contactPerson;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getAddressLine1StreetName() {
+        return addressLine1StreetName;
+    }
+
+    public void setAddressLine1StreetName(String addressLine1StreetName) {
+        this.addressLine1StreetName = addressLine1StreetName;
+    }
+
+    public String getAddressLine2StreetNo() {
+        return addressLine2StreetNo;
+    }
+
+    public void setAddressLine2StreetNo(String addressLine2StreetNo) {
+        this.addressLine2StreetNo = addressLine2StreetNo;
+    }
+
+    public String getAddressLine3BuildingNo() {
+        return addressLine3BuildingNo;
+    }
+
+    public void setAddressLine3BuildingNo(String addressLine3BuildingNo) {
+        this.addressLine3BuildingNo = addressLine3BuildingNo;
+    }
+
+    public Integer getZipcode() {
+        return zipcode;
+    }
+
+    public void setZipcode(Integer zipcode) {
+        this.zipcode = zipcode;
+    }
+
+    public String getOtherAdressDetails() {
+        return otherAdressDetails;
+    }
+
+    public void setOtherAdressDetails(String otherAdressDetails) {
+        this.otherAdressDetails = otherAdressDetails;
     }
 
 }

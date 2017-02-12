@@ -6,6 +6,7 @@
 package domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.loadbalancer.LoadBalancerClient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,54 +27,51 @@ import org.springframework.web.bind.annotation.RestController;
 //@Controller annotation indicates that a particular class serves the role of a controller.
 //@ResponseBody indicates that the return type should be written straight to the HTTP response body 
 @RestController
-@RequestMapping("/CustomerService")
-
+@RequestMapping("/CustomerService/Users")
+@SpringBootApplication
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //------------------------------------------------------------------CRUD-CONTROLLER-API------------------------------------------------------//
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-public class APICustomerController {
+public class APIUserController {
 
     @Autowired
     LoadBalancerClient loadBalancerClient;
 
     @Autowired
-    CustomerServiceInterface CustomerServiceInterface;
-
-    @Autowired
-    TechnicianService TechnicianServiceInterface;
+    UserServiceInterface UserServiceInterface;
 
 //                                                                                                                                           //
 //---------------------------------------------------------------------CREATE----------------------------------------------------------------//
 //                                                                                                                                           //
-    @RequestMapping(value = "/create_customer", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
-        return CustomerServiceInterface.createCustomer(customer);
+    @RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> createUsers(@RequestBody User user) {
+        return UserServiceInterface.createUser(user);
     }
 //                                                                                                                                           //
 //---------------------------------------------------------------------READ------------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(value = "/select_customer", method = RequestMethod.GET, params = {"customerID"})
-    public ResponseEntity<Customer> selectCustomer(@RequestParam int customerID) {
-        return CustomerServiceInterface.selectCustomer(customerID);
+    @RequestMapping(value = "/", method = RequestMethod.GET, params = {"userID"})
+    public ResponseEntity<User> selectUser(@RequestParam int userID) {
+        return UserServiceInterface.selectUser(userID);
     }
 //                                                                                                                                           //
 //---------------------------------------------------------------------EDIT------------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(value = "/update_customer/{customerID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
-    public Customer updateCustomer(@PathVariable("customerID") int customerID, @RequestBody Customer updatedCustomerValues) {
+    @RequestMapping(value = "/{userID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<User> updateUser(@PathVariable("userID") int userID, @RequestBody User updatedUserValues) {
 
-        return CustomerServiceInterface.updateCustomer(customerID, updatedCustomerValues);
+        return UserServiceInterface.updateUser(userID, updatedUserValues);
     }
 //                                                                                                                                           //
 //--------------------------------------------------------------------DElETE-----------------------------------------------------------------//
 //                                                                                                                                           //
 
-    @RequestMapping(value = "/delete_customer/{customerID}", method = RequestMethod.DELETE)
-    public ResponseEntity<Customer> deleteCustomer(@PathVariable("customerID") int customerID) {
+    @RequestMapping(value = "/{userID}", method = RequestMethod.DELETE)
+    public ResponseEntity<User> deleteUser(@PathVariable("userID") int userID) {
 
-        return CustomerServiceInterface.deleteCustomer(customerID);
+        return UserServiceInterface.deleteUser(userID);
 
     }
 
@@ -83,7 +81,7 @@ public class APICustomerController {
     @RequestMapping("/Test")
     public String getTestMessage() {
 
-        return CustomerServiceInterface.getTestMessage();
+        return UserServiceInterface.getTestMessage();
     }
 
 }

@@ -13,39 +13,46 @@ import javax.persistence.Id;
  *
  * @author Idorf
  */
-@Entity
 public class Customer {
 
-    @Id
-    @GeneratedValue
-    Integer id;
-    
-    String Company;
-    String contactPerson;
 
+//    @Id
+//    @GeneratedValue
+//    Integer id;
+    Integer customerId;
+    Integer customerType;
+    String customerName;
 
-    public Integer getId() {
-        return id;
+  //  public Customer() {
+//        this.id = 1;
+//        this.Company = "internalCompany";
+//        this.contactPerson = "internalContactPerson";
+    //}
+
+    public Integer getCustomerId() {
+        return customerId;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setCustomerId(Integer customerId) {
+        this.customerId = customerId;
     }
 
-    public String getCompany() {
-        return Company;
+
+    public Integer getCustomerType() {
+        return customerType;
     }
 
-    public void setCompany(String Company) {
-        this.Company = Company;
+    public void setCustomerType(Integer customerType) {
+        this.customerType = customerType;
     }
 
-    public String getContactPerson() {
-        return contactPerson;
+    public String getCustomerName() {
+        return customerName;
     }
 
-    public void setContactPerson(String contactPerson) {
-        this.contactPerson = contactPerson;
+    public void setCustomerName(String customerName) {
+        this.customerName = customerName;
     }
 
 }
+
