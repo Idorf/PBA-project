@@ -51,17 +51,17 @@ public interface CustomerServiceInterface {
     ResponseEntity<Customer> deleteCustomer(@RequestParam(value = "customerID") int customerID);
 
 
-
 //                                                                                                                                           //
 //--------------------------------------------------------------------TEST-------------------------------------------------------------------//
 //              
     
-
     
-    
-    
-    
-    @RequestMapping("/CustomerService/Test")
+    @RequestMapping("/CustomerService/Customers/Test")
     public String getTestMessage();
 
+        @RequestMapping("/CustomerService/Customers/Test2")
+    public String getTestMessage2();
+
 }
+
+

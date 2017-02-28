@@ -2,6 +2,7 @@ package main.domain;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -33,11 +34,12 @@ public class CustomerServiceController {
 //                                                                                                                                           //
     @RequestMapping(value = "/", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Customer> createCustomer(@RequestBody Customer customer) {
+        System.out.println("-------------------------------create");
 
         jdbcTemplate.update(
                 "CAll CreateCustomer(?,?,?,?,?,?,?,?)",
-               customer.getCustomerType(), customer.getCustomerName(),customer.getCity(), customer.getAddressLine1StreetName(), customer.getAddressLine2StreetNo(), customer.getAddressLine3BuildingNo(),customer.getZipcode(), customer.getOtherAdressDetails());
-
+                customer.getCustomerType(), customer.getCustomerName(), customer.getCity(), customer.getAddressLine1StreetName(), customer.getAddressLine2StreetNo(), customer.getAddressLine3BuildingNo(), customer.getZipcode(), customer.getOtherAdressDetails());
+       
         return new ResponseEntity<>(customer, HttpStatus.OK);
     }
 //                                                                                                                                           //
@@ -46,8 +48,9 @@ public class CustomerServiceController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET, params = {"customerID"})
     public ResponseEntity<Customer> selectCustomer(@RequestParam(value = "customerID") int customerID) {
+        System.out.println("-------------------------------select");
 
-        String sql = "SELECT * FROM customer WHERE customer_id = ?";
+        String sql = "CALL SelectCustomer(?)";
 
         Customer customer = (Customer) jdbcTemplate.queryForObject(sql, new Object[]{customerID}, new CustomerRowMapper());
 
@@ -65,15 +68,18 @@ public class CustomerServiceController {
 
     @RequestMapping(value = "/{customerID}", method = RequestMethod.PUT, consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Customer> updatedCustomer(@PathVariable("customerID") int customerID, @RequestBody Customer updatedCustomerValues) {
-        System.out.println("-------------------------------test");
+        System.out.println("-------------------------------Update");
 
-        jdbcTemplate.update("UPDATE customer SET customer_name = ?, customer_type_id = ?  where customer_id = ?", updatedCustomerValues.getCustomerName(), updatedCustomerValues.getCustomerType(), customerID);
+        jdbcTemplate.update(
+                "CAll UpdateCustomer(?,?,?,?,?,?,?,?,?)",
+                customerID, updatedCustomerValues.getCustomerType(), updatedCustomerValues.getCustomerName(), updatedCustomerValues.getCity(), updatedCustomerValues.getAddressLine1StreetName(), updatedCustomerValues.getAddressLine2StreetNo(), updatedCustomerValues.getAddressLine3BuildingNo(), updatedCustomerValues.getZipcode(), updatedCustomerValues.getOtherAdressDetails());
 
-        String sql = "SELECT * FROM customer WHERE customer_id = ?";
+        String sql = "CALL SelectCustomer(?)";
 
         updatedCustomerValues = (Customer) jdbcTemplate.queryForObject(sql, new Object[]{customerID}, new CustomerRowMapper());
 
         if (updatedCustomerValues == null) {
+
             System.out.println("Unable to delete. User with id " + customerID + " not found");
             return new ResponseEntity<>(updatedCustomerValues, HttpStatus.NOT_FOUND);
         }
@@ -87,14 +93,19 @@ public class CustomerServiceController {
     @RequestMapping(value = "/{customerID}", method = RequestMethod.DELETE)
     public ResponseEntity<Customer> deleteCustomer(@PathVariable("customerID") int customerID) {
 
-        jdbcTemplate.update("DELETE FROM customer WHERE customer_id = ?", customerID);
+        jdbcTemplate.update("CALL DeleteCustomer (?)", customerID);
 
-        String sql = "SELECT * FROM user WHERE customer_id = ?";
-
-        Customer customer = (Customer) jdbcTemplate.queryForObject(sql, new Object[]{customerID}, new CustomerRowMapper());
-
+        String sql = "CALL SelectCustomer(?)";
+        Customer customer;
+        try {
+            customer = (Customer) jdbcTemplate.queryForObject(sql, new Object[]{customerID}, new CustomerRowMapper());
+        } catch (EmptyResultDataAccessException e)
+        {
+            return null;
+        }
+        
         if (customer == null) {
-            System.out.println("Unable to delete. User with id " + customerID + " not found");
+            System.out.println(customerID + " DELETED");
             return new ResponseEntity<>(customer, HttpStatus.NOT_FOUND);
         }
 
@@ -108,7 +119,7 @@ public class CustomerServiceController {
     @RequestMapping("/Test")
     public String getTestMessage() {
 
-        return "Test message from customerservice ";
+        return "Test message from local customerservice  ";
     }
 
 }

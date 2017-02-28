@@ -76,7 +76,16 @@ public class APICustomerController {
     @RequestMapping("/Test")
     public String getTestMessage() {
 
-        return CustomerServiceInterface.getTestMessage();
-    }
+      //  return  "Test message from API ";
 
+       return CustomerServiceInterface.getTestMessage();
+    }
+    
+    @RequestMapping("/Test2")
+    public String getTestMessage2() {
+
+        return  "Test message from API ";
+
+    }
+   
 }

@@ -17,6 +17,7 @@ public class TechnicianRowMapper implements RowMapper{
 		technician.setFirstName(rs.getString("first_name"));
 		technician.setLastName(rs.getString("last_name"));
 		technician.setEmployeId(rs.getInt("employe_id"));
+		technician.setDepartmentId(rs.getInt("department_id"));
 
 		return technician;
 	}

@@ -5,10 +5,15 @@ package domain;
  *
  * @author Idorf
  */
+import com.netflix.appinfo.AmazonInfo;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.*;
+import org.springframework.cloud.commons.util.InetUtils;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.eureka.EurekaInstanceConfigBean;
 import org.springframework.cloud.netflix.feign.EnableFeignClients;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication  //Same as @Configuration @EnableAutoConfiguration @ComponentScan -- http://docs.spring.io/autorepo/docs/spring-boot/current/reference/html/using-boot-using-springbootapplication-annotation.html
 @EnableEurekaClient     //Makes the app into both a Eureka "instance" (i.e. it registers itself) and a "client"  -- http://cloud.spring.io/spring-cloud-netflix/spring-cloud-netflix.html#spring-cloud-eureka-server
@@ -24,8 +29,20 @@ import org.springframework.cloud.netflix.feign.EnableFeignClients;
 @EnableFeignClients
 public class RunAPI {
     
+   @Value("${server.port:8020}") 
+    private int port;
   public static void main(String[] args) {
     SpringApplication.run(RunAPI.class, args);
   }
 
+    @Bean
+    public EurekaInstanceConfigBean eurekaInstanceConfig(InetUtils inetUtils) {
+        EurekaInstanceConfigBean config = new EurekaInstanceConfigBean(inetUtils);
+        AmazonInfo info = AmazonInfo.Builder.newBuilder().autoBuild("eureka");
+        config.setHostname(info.get(AmazonInfo.MetaDataKey.publicHostname));
+        config.setIpAddress(info.get(AmazonInfo.MetaDataKey.publicIpv4));
+        config.setNonSecurePort(port);
+        config.setDataCenterInfo(info);
+        return config;
+    }
 }
